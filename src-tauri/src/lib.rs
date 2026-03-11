@@ -7,6 +7,7 @@
 
 use tauri::{webview::WebviewWindowBuilder, WebviewUrl};
 
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let port: u16 = 44548;
     let context = tauri::generate_context!();
@@ -19,12 +20,14 @@ pub fn run() {
 
     builder
         .plugin(tauri_plugin_localhost::Builder::new(port).build())
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        // TODO make this desktop-exclusive
+        //.plugin(tauri_plugin_window_state::Builder::new().build())
         .setup(move |app| {
             let url = format!("http://localhost:{}", port).parse().unwrap();
             let window_url = WebviewUrl::External(url);
             WebviewWindowBuilder::new(app, "main".to_string(), window_url)
-                .title("Cinny")
+                // TODO make this desktop-exclusive
+                // .title("Cinny")
                 .build()?;
             Ok(())
         })
